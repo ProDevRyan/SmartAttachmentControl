@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest>
+  <control namespace="PA911CustomControls" constructor="SmartAttachmentControl" version="1.0.4" display-name-key="Smart Attachment Control" description-key="Customizable file attachment control with drag-and-drop support" control-type="standard" >
+    <external-service-usage enabled="false">
+    </external-service-usage>
+    <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
+    <property name="Files" display-name-key="Files" description-key="JSON string containing uploaded file data" of-type="SingleLine.Text" usage="bound" required="false" />
+    <property name="ClearFiles" display-name-key="Clear Files Counter" description-key="Increment this number to clear all files (e.g., use a context variable and increment it)" of-type="Whole.None" usage="input" required="false" default-value="0" />
+    <property name="ShowDocumentation" display-name-key="Show Documentation" description-key="Set to true to display developer documentation overlay" of-type="TwoOptions" usage="input" required="false" default-value="false" />
+    
+    <!-- Style Properties -->
+    <property name="stylePrimaryColorHex" display-name-key="Primary Color (Hex)" description-key="Hex color for button and border" of-type="SingleLine.Text" usage="input" required="false" default-value="#3860B2" />
+    <property name="styleMainTextColor" display-name-key="Main Text Color (Hex)" description-key="Hex color for main text" of-type="SingleLine.Text" usage="input" required="false" default-value="#000000" />
+    <property name="styleButtonTextColor" display-name-key="Button Text Color (Hex)" description-key="Hex color for button text" of-type="SingleLine.Text" usage="input" required="false" default-value="#FFFFFF" />
+    <property name="styleBackgroundColorHex" display-name-key="Background Color (Hex)" description-key="Hex color for drop zone and header background" of-type="SingleLine.Text" usage="input" required="false" default-value="#e1dfdd" />
+    <property name="styleErrorColorHex" display-name-key="Error Color (Hex)" description-key="Hex color for error messages" of-type="SingleLine.Text" usage="input" required="false" default-value="#d13438" />
+    <property name="styleBorderRadius" display-name-key="Border Radius" description-key="Border radius in pixels" of-type="Whole.None" usage="input" required="false" default-value="5" />
+    <property name="styleBoxShadowSize" display-name-key="Box Shadow Size" description-key="Box shadow offset in pixels (0 for no shadow)" of-type="Whole.None" usage="input" required="false" default-value="3" />
+    <property name="styleGap" display-name-key="Gap Size" description-key="Gap between drop zone and file list in pixels" of-type="Whole.None" usage="input" required="false" default-value="20" />
+    <property name="styleLayoutHorizontal" display-name-key="Horizontal Layout" description-key="True for side-by-side layout, false for vertical stacked layout" of-type="TwoOptions" usage="input" required="false" default-value="true" />
+    <property name="styleFont" display-name-key="Font Family" description-key="Font family name (e.g., Open Sans, Arial, Lato)" of-type="SingleLine.Text" usage="input" required="false" default-value="Open Sans" />
+
+    <!-- SVG Icon Properties -->
+    <property name="svgDropZone" display-name-key="Drop Zone Icon SVG" description-key="Custom SVG for drop zone icon" of-type="Multiple" usage="input" required="false" />
+    <property name="svgEmptyFileList" display-name-key="Empty List Icon SVG" description-key="Custom SVG for empty file list" of-type="Multiple" usage="input" required="false" />
+    <property name="svgTypeImage" display-name-key="Image File Icon SVG" description-key="Custom SVG for image files" of-type="Multiple" usage="input" required="false" />
+    <property name="svgTypeDoc" display-name-key="Doc File Icon SVG" description-key="Custom SVG for document files" of-type="Multiple" usage="input" required="false" />
+    <property name="svgTypeOther" display-name-key="Other File Icon SVG" description-key="Custom SVG for other file types" of-type="Multiple" usage="input" required="false" />
+    <property name="svgDeleteIcon" display-name-key="Delete Icon SVG" description-key="Custom SVG for delete/remove button icon" of-type="Multiple" usage="input" required="false" />
+    
+    <!-- Setting Properties -->
+    <property name="settingMaxFileSizeMB" display-name-key="Max File Size (MB)" description-key="Maximum file size in megabytes" of-type="Whole.None" usage="input" required="false" default-value="10" />
+    <property name="settingMaxNumberOfFiles" display-name-key="Max Number of Files" description-key="Maximum number of files allowed" of-type="Whole.None" usage="input" required="false" default-value="5" />
+    <property name="settingAllowedFileTypes" display-name-key="Allowed File Types" description-key="Comma-separated list of allowed file extensions (e.g., .pdf,.jpg,.doc)" of-type="Multiple" usage="input" required="false" />
+    
+    <!-- Text Properties -->
+    <property name="textBrowseButtonText" display-name-key="Browse Button Text" description-key="Text displayed on the browse button" of-type="SingleLine.Text" usage="input" required="false" default-value="Select files" />
+    <!--
+      Property node's of-type attribute can be of-type-group attribute.
+      Example:
+      <type-group name="numbers">
+        <type>Whole.None</type>
+        <type>Currency</type>
+        <type>FP</type>
+        <type>Decimal</type>
+      </type-group>
+      <property name="sampleProperty" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type-group="numbers" usage="bound" required="true" />
+    -->
+    <resources>
+      <code path="index.ts" order="1"/>
+      <css path="css/FileUploaderv3.css" order="1" />
+    </resources>
+    <!-- UNCOMMENT TO ENABLE THE SPECIFIED API
+    <feature-usage>
+      <uses-feature name="Device.captureAudio" required="true" />
+      <uses-feature name="Device.captureImage" required="true" />
+      <uses-feature name="Device.captureVideo" required="true" />
+      <uses-feature name="Device.getBarcodeValue" required="true" />
+      <uses-feature name="Device.getCurrentPosition" required="true" />
+      <uses-feature name="Device.pickFile" required="true" />
+      <uses-feature name="Utility" required="true" />
+      <uses-feature name="WebAPI" required="true" />
+    </feature-usage>
+    -->
+  </control>
+</manifest>
