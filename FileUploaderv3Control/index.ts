@@ -1,12 +1,13 @@
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { FileUploader, FileData } from "./FileUploaderv3";
+import { FileUploader, FileData, FileMetadata } from "./FileUploaderv3";
 
 export class SmartAttachmentControl implements ComponentFramework.StandardControl<IInputs, IOutputs> {
     private container!: HTMLDivElement;
     private notifyOutputChanged!: () => void;
     private files: FileData[] = [];
+    private fileMetadata: FileMetadata[] = [];
     private lastClearCounter: number = 0;
 
     constructor() {
@@ -36,10 +37,13 @@ export class SmartAttachmentControl implements ComponentFramework.StandardContro
     public updateView(context: ComponentFramework.Context<IInputs>): void {
         // Check if ClearFiles counter has changed (increment to trigger clear)
         const currentClearCounter = context.parameters.ClearFiles?.raw || 0;
-        if (currentClearCounter !== this.lastClearCounter) {
+        const shouldClearFiles = currentClearCounter !== this.lastClearCounter;
+        
+        if (shouldClearFiles) {
             console.log(`ClearFiles counter changed: ${this.lastClearCounter} -> ${currentClearCounter}, clearing files`);
             this.lastClearCounter = currentClearCounter;
             this.files = [];
+            this.fileMetadata = [];
             this.notifyOutputChanged();
         }
         
@@ -57,6 +61,11 @@ export class SmartAttachmentControl implements ComponentFramework.StandardContro
                     this.files = newFiles;
                     this.notifyOutputChanged();
                 },
+                onMetadataChange: (metadata: FileMetadata[]) => {
+                    this.fileMetadata = metadata;
+                    this.notifyOutputChanged();
+                },
+                clearFilesTriggered: shouldClearFiles,
                 showDocumentation: context.parameters.ShowDocumentation?.raw === true,
                 stylePrimaryColorHex: getStringValue(context.parameters.stylePrimaryColorHex?.raw),
                 styleMainTextColor: getStringValue(context.parameters.styleMainTextColor?.raw),
@@ -85,7 +94,8 @@ export class SmartAttachmentControl implements ComponentFramework.StandardContro
 
     public getOutputs(): IOutputs {
         return {
-            Files: JSON.stringify(this.files)
+            Files: JSON.stringify(this.files),
+            FileMetadata: JSON.stringify(this.fileMetadata)
         };
     }
 

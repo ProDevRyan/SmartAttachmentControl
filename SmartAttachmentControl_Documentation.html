@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attachment Control - Developer Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #323130;
+            line-height: 1.6;
+            background-color: #ffffff;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #201f1e;
+            margin: 0 0 16px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #edebe9;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #201f1e;
+            margin: 32px 0 16px 0;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #323130;
+            margin: 20px 0 12px 0;
+            page-break-after: avoid;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #323130;
+            margin: 12px 0 8px 0;
+        }
+
+        p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        ul, ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        code {
+            background-color: #f3f2f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            color: #d13438;
+        }
+
+        pre {
+            background-color: #f3f2f1;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 12px 0;
+            border-left: 3px solid #0078d4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            page-break-inside: avoid;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #323130;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            display: block;
+        }
+
+        .doc-section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+
+        .property-item {
+            background-color: #faf9f8;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            border-left: 4px solid #0078d4;
+            page-break-inside: avoid;
+        }
+
+        .property-item h3,
+        .property-item h4 {
+            margin-top: 0;
+            color: #0078d4;
+        }
+
+        .property-item p {
+            margin: 4px 0;
+        }
+
+        .property-item strong {
+            color: #323130;
+            font-weight: 600;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .property-grid .property-item {
+            background-color: #faf9f8;
+            padding: 12px;
+            border-left: 3px solid #0078d4;
+        }
+
+        .property-grid .property-item h4 {
+            font-size: 14px;
+            margin: 0 0 8px 0;
+            color: #0078d4;
+        }
+
+        .property-grid .property-item p {
+            font-size: 13px;
+            margin: 4px 0;
+        }
+
+        .doc-footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 2px solid #edebe9;
+            text-align: center;
+            color: #605e5c;
+            font-size: 13px;
+        }
+
+        .doc-footer p {
+            margin: 4px 0;
+        }
+
+        .note-box {
+            background-color: #fff4ce;
+            border-left: 4px solid #ffb900;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .note-box strong {
+            color: #c57014;
+        }
+
+        @media print {
+            body {
+                padding: 20px;
+            }
+            
+            .doc-section {
+                page-break-inside: avoid;
+            }
+            
+            h2 {
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="documentation-content">
+        <div class="doc-section">
+            <h1>Smart Attachment Control - Developer Documentation</h1>
+            
+            <h2>Overview</h2>
+            <p>The Smart Attachment Control is a fully customizable Power Apps Component Framework (PCF) control that enables drag-and-drop file uploads with real-time preview and management. Files are converted to base64-encoded JSON strings that can be easily transformed into Power Apps collections for further processing, storage, or integration with SharePoint, Dataverse, or other data sources. The control provides extensive styling options, file type restrictions, size limits, and built-in validation to create a professional file upload experience.</p>
+        </div>
+
+        <div class="doc-section">
+            <h2>Quick Start</h2>
+            <ol>
+                <li>Add the control to your screen</li>
+                <li>Add this code to the control's <strong>OnChange</strong> event (replace <code>SmartAttachmentControl</code> with your control's name):</li>
+            </ol>
+            <pre><code>// Convert files to collection
+ClearCollect(
+    colAttachments,
+    ForAll(
+        ParseJSON(SmartAttachmentControl.Files),
+        {
+            name: Text(ThisRecord.name),
+            size: Value(ThisRecord.size),
+            type: Text(ThisRecord.type),
+            base64: Text(ThisRecord.base64)
+        }
+    )
+);
+
+// Convert metadata to collection (includes EXIF data for images)
+ClearCollect(
+    colFileMetadata,
+    ForAll(
+        ParseJSON(SmartAttachmentControl.FileMetadata),
+        {
+            name: Text(ThisRecord.name),
+            size: Value(ThisRecord.size),
+            type: Text(ThisRecord.type),
+            lastModified: DateTimeValue(ThisRecord.lastModified),
+            dateTaken: If(
+                !IsBlank(ThisRecord.exif.dateTaken),
+                DateTimeValue(ThisRecord.exif.dateTaken),
+                Blank()
+            ),
+            camera: Text(ThisRecord.exif.camera),
+            width: Value(ThisRecord.exif.width),
+            height: Value(ThisRecord.exif.height),
+            iso: Value(ThisRecord.exif.iso)
+        }
+    )
+)</code></pre>
+        </div>
+
+        <div class="doc-section">
+            <h2>Data Properties</h2>
+            
+            <div class="property-item">
+                <h3>Files (Output)</h3>
+                <p><strong>Type:</strong> Single Line Text</p>
+                <p><strong>Description:</strong> JSON string containing all uploaded files with base64 data</p>
+                <p><strong>Note:</strong> Use the OnChange event to convert this to a Power Apps collection</p>
+            </div>
+
+            <div class="property-item">
+                <h3>FileMetadata (Output)</h3>
+                <p><strong>Type:</strong> Single Line Text</p>
+                <p><strong>Description:</strong> JSON string containing file metadata including EXIF data for images</p>
+                <p><strong>Includes:</strong> Name, size, type, lastModified, and for images: dateTaken, camera, GPS, dimensions, ISO, focal length, exposure time, f-number</p>
+                <p><strong>Note:</strong> Use ParseJSON to convert this to a Power Apps collection</p>
+            </div>
+
+            <div class="property-item">
+                <h3>ClearFiles (Input)</h3>
+                <p><strong>Type:</strong> Whole Number | <strong>Default:</strong> 0</p>
+                <p><strong>Usage:</strong> Increment this counter to clear all uploaded files</p>
+                <p><strong>Example:</strong> <code>ClearFiles = varClearCounter</code></p>
+                <p><strong>How it works:</strong> When the number changes, the control detects the change and clears all files</p>
+            </div>
+
+            <div class="property-item">
+                <h3>ShowDocumentation (Input)</h3>
+                <p><strong>Type:</strong> Boolean | <strong>Default:</strong> false</p>
+                <p><strong>Usage:</strong> Set to true to display developer documentation overlay</p>
+            </div>
+        </div>
+
+        <div class="doc-section">
+            <h2>Style Properties - Colors</h2>
+            <div class="property-grid">
+                <div class="property-item">
+                    <h4>stylePrimaryColorHex</h4>
+                    <p>Default: #3860B2</p>
+                    <p>Primary color for buttons, borders, and accents</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleMainTextColor</h4>
+                    <p>Default: #000000</p>
+                    <p>Color for primary text</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleButtonTextColor</h4>
+                    <p>Default: #FFFFFF</p>
+                    <p>Text color on buttons</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleBackgroundColorHex</h4>
+                    <p>Default: #e1dfdd</p>
+                    <p>Background color for drop zone and header</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleErrorColorHex</h4>
+                    <p>Default: #d13438</p>
+                    <p>Color for error messages and delete icon</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="doc-section">
+            <h2>Style Properties - Layout</h2>
+            <div class="property-grid">
+                <div class="property-item">
+                    <h4>styleBorderRadius</h4>
+                    <p>Default: 5 | Range: 0-50</p>
+                    <p>Border radius in pixels</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleBoxShadowSize</h4>
+                    <p>Default: 3 | Range: 0-20</p>
+                    <p>Box shadow offset (0 = no shadow)</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleGap</h4>
+                    <p>Default: 20 | Range: 0-100</p>
+                    <p>Space between drop zone and file list</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleLayoutHorizontal</h4>
+                    <p>Default: true</p>
+                    <p>true = side-by-side | false = vertical stack</p>
+                </div>
+                <div class="property-item">
+                    <h4>styleFont</h4>
+                    <p>Default: Open Sans</p>
+                    <p>Font family for all text</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="doc-section">
+            <h2>Icon Properties (SVG)</h2>
+            <p>All icon properties accept SVG markup. Leave blank to use defaults from Fluent 2 icon library.</p>
+            <div class="property-grid">
+                <div class="property-item">
+                    <h4>svgDropZone</h4>
+                    <p>Icon in drop zone (50x50px)</p>
+                </div>
+                <div class="property-item">
+                    <h4>svgEmptyFileList</h4>
+                    <p>Icon when no files uploaded (50x50px)</p>
+                </div>
+                <div class="property-item">
+                    <h4>svgTypeImage</h4>
+                    <p>Icon for image files (24x24px)</p>
+                </div>
+                <div class="property-item">
+                    <h4>svgTypeDoc</h4>
+                    <p>Icon for document files (24x24px)</p>
+                </div>
+                <div class="property-item">
+                    <h4>svgTypeOther</h4>
+                    <p>Icon for other file types (24x24px)</p>
+                </div>
+                <div class="property-item">
+                    <h4>svgDeleteIcon</h4>
+                    <p>Delete button icon (20x20px)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="doc-section">
+            <h2>File Settings</h2>
+            <div class="property-item">
+                <h3>settingMaxFileSizeMB</h3>
+                <p><strong>Default:</strong> 10 | <strong>Range:</strong> 1-100</p>
+                <p>Maximum file size in megabytes. Files exceeding this will be rejected.</p>
+            </div>
+            <div class="property-item">
+                <h3>settingMaxNumberOfFiles</h3>
+                <p><strong>Default:</strong> 5 | <strong>Range:</strong> 1-50</p>
+                <p>Maximum number of files allowed. Additional files beyond this limit will be rejected.</p>
+            </div>
+            <div class="property-item">
+                <h3>settingAllowedFileTypes</h3>
+                <p><strong>Default:</strong> (empty - all types allowed)</p>
+                <p><strong>Format:</strong> Comma-separated extensions without dots (e.g., "pdf,jpg,png,docx")</p>
+                <p>Leave blank to allow all file types.</p>
+            </div>
+            <div class="property-item">
+                <h3>textBrowseButtonText</h3>
+                <p><strong>Default:</strong> Select files</p>
+                <p>Text displayed on the browse button</p>
+            </div>
+        </div>
+
+        <div class="doc-section">
+            <h2>Working with File Data</h2>
+            
+            <h3>Converting JSON to Collections</h3>
+            <p>Place this code in the control's <strong>OnChange</strong> event:</p>
+            
+            <div class="note-box">
+                <p><strong>Important Note:</strong> The code below is a SAMPLE showing common EXIF fields. Different applications will need different metadata fields. Inspect the actual FileMetadata JSON output from your control to see what's available, then customize the schema accordingly.</p>
+            </div>
+            
+            <pre><code>// Convert files to collection
+ClearCollect(
+    colAttachments,
+    ForAll(
+        ParseJSON(SmartAttachmentControl.Files),
+        {
+            name: Text(ThisRecord.name),
+            size: Value(ThisRecord.size),
+            type: Text(ThisRecord.type),
+            base64: Text(ThisRecord.base64)
+        }
+    )
+);
+
+// Convert metadata to collection
+ClearCollect(
+    colFileMetadata,
+    ForAll(
+        ParseJSON(SmartAttachmentControl.FileMetadata),
+        {
+            name: Text(ThisRecord.name),
+            size: Value(ThisRecord.size),
+            type: Text(ThisRecord.type),
+            lastModified: DateTimeValue(ThisRecord.lastModified),
+            dateTaken: If(
+                !IsBlank(ThisRecord.exif.dateTaken),
+                DateTimeValue(ThisRecord.exif.dateTaken),
+                Blank()
+            ),
+            camera: Text(ThisRecord.exif.camera),
+            width: Value(ThisRecord.exif.width),
+            height: Value(ThisRecord.exif.height),
+            iso: Value(ThisRecord.exif.iso)
+        }
+    )
+)</code></pre>
+            
+            <h3>Collection Schema</h3>
+            <p>After conversion, <code>colAttachments</code> contains:</p>
+            <ul>
+                <li><strong>name</strong> (Text): Original filename</li>
+                <li><strong>size</strong> (Number): File size in bytes</li>
+                <li><strong>type</strong> (Text): MIME type (e.g., "application/pdf")</li>
+                <li><strong>base64</strong> (Text): Base64-encoded file data with data URI prefix</li>
+            </ul>
+            
+            <p>And <code>colFileMetadata</code> contains (SAMPLE - customize based on your needs):</p>
+            <ul>
+                <li><strong>name</strong> (Text): Original filename</li>
+                <li><strong>size</strong> (Number): File size in bytes</li>
+                <li><strong>type</strong> (Text): MIME type</li>
+                <li><strong>lastModified</strong> (DateTime): File last modified date</li>
+                <li><strong>dateTaken</strong> (DateTime): Date photo was taken (images only)</li>
+                <li><strong>camera</strong> (Text): Camera make and model (images only)</li>
+                <li><strong>width</strong> (Number): Image width in pixels</li>
+                <li><strong>height</strong> (Number): Image height in pixels</li>
+                <li><strong>iso</strong> (Number): ISO speed rating</li>
+            </ul>
+
+            <h3>Inspecting Available Metadata</h3>
+            <p>To see what metadata is available for your specific files, add a Label to your screen and set its Text property to:</p>
+            <pre><code>SmartAttachmentControl.FileMetadata</code></pre>
+            <p>This will display the raw JSON. Review the structure and adjust your collection schema to include the fields you need. Available EXIF fields may include:</p>
+            <ul>
+                <li>dateTaken, camera, gps (latitude/longitude)</li>
+                <li>width, height, orientation</li>
+                <li>iso, focalLength, exposureTime, fNumber</li>
+                <li>And many more depending on the camera/device</li>
+            </ul>
+
+            <h3>Using Metadata in Your App</h3>
+            <p><strong>Note:</strong> These examples assume you've included these specific fields in your metadata collection.</p>
+            <pre><code>// Get date a photo was taken
+LookUp(
+    colFileMetadata,
+    name = "vacation.jpg"
+).dateTaken
+
+// Filter photos by date taken
+Filter(
+    colFileMetadata,
+    DateValue(dateTaken) = DateValue("2024-07-04")
+)
+
+// Display camera info
+LookUp(
+    colFileMetadata,
+    name = "photo.jpg"
+).camera</code></pre>
+
+            <h3>Clearing Files Programmatically</h3>
+            <pre><code>// Initialize counter variable (in App.OnStart or Screen.OnVisible)
+UpdateContext({
+    varClearCounter: 0
+});
+
+// When you want to clear files, increment the counter
+UpdateContext({
+    varClearCounter: varClearCounter + 1
+});</code></pre>
+            <p><strong>Note:</strong> Each time the counter changes, files are cleared. This avoids timing issues with boolean toggles.</p>
+        </div>
+
+        <div class="doc-section">
+            <h2>Common Customization Scenarios</h2>
+            
+            <h3>Compact Layout</h3>
+            <pre><code>styleGap: 10
+styleBorderRadius: 2
+styleBoxShadowSize: 1</code></pre>
+
+            <h3>Restrict to PDFs Only</h3>
+            <pre><code>settingAllowedFileTypes: "pdf"
+settingMaxFileSizeMB: 25</code></pre>
+
+            <h3>Photo Upload</h3>
+            <pre><code>settingAllowedFileTypes: "jpg,jpeg,png,heic"
+settingMaxFileSizeMB: 5
+settingMaxNumberOfFiles: 10</code></pre>
+        </div>
+
+        <div class="doc-section">
+            <h2>Troubleshooting</h2>
+            <ul>
+                <li><strong>Files not appearing in collection:</strong> Verify OnChange event contains the ParseJSON code. Ensure control name matches your control instance.</li>
+                <li><strong>ClearFiles not working:</strong> Make sure you're incrementing the counter variable, not just setting it to the same value repeatedly.</li>
+                <li><strong>Large files rejected:</strong> Increase settingMaxFileSizeMB. Check file doesn't exceed Power Apps 50MB limit.</li>
+                <li><strong>Layout looks wrong:</strong> Try toggling styleLayoutHorizontal. Adjust Component Container Width/Height.</li>
+                <li><strong>Metadata not showing expected fields:</strong> Different cameras/devices provide different EXIF data. Inspect the FileMetadata JSON to see what's actually available.</li>
+            </ul>
+        </div>
+
+        <div class="doc-section">
+            <h2>Best Practices</h2>
+            <ol>
+                <li>Always add the OnChange code to convert files to a usable collection</li>
+                <li>Use a numeric counter variable for ClearFiles - increment it each time you want to clear</li>
+                <li>Use allowed file types to prevent unwanted uploads</li>
+                <li>Keep max file size reasonable (under 25MB recommended)</li>
+                <li>Test with various file types before deploying</li>
+                <li>Consider mobile users - use vertical layout for narrow screens</li>
+                <li>Provide clear error messaging in your app for upload failures</li>
+                <li>Inspect FileMetadata JSON output to determine which EXIF fields are available for your use case</li>
+                <li>Only extract metadata fields you actually need to keep collections efficient</li>
+            </ol>
+        </div>
+
+        <div class="doc-footer">
+            <p><strong>Control Version:</strong> 1.0.7</p>
+            <p><strong>Namespace:</strong> PA911CustomControls.SmartAttachmentControl</p>
+            <p><strong>New in v1.0.7:</strong> FileMetadata output with EXIF data extraction for images</p>
+            <p><strong>Generated:</strong> November 19, 2025</p>
+        </div>
+    </div>
+</body>
+</html>

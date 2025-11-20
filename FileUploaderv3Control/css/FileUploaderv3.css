@@ -115,7 +115,6 @@
     padding: 12px;
     border-radius: 0;
     margin-bottom: 8px;
-    background-color: #faf9f8;
     border: 1px solid #edebe9;
 }
 
@@ -281,6 +280,7 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    text-align: left;
 }
 
 .documentation-content pre code {
@@ -291,6 +291,8 @@
     line-height: 1.5;
     white-space: pre-wrap;
     word-wrap: break-word;
+    text-align: left;
+    display: block;
 }
 
 .doc-section {

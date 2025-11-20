@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="PA911CustomControls" constructor="SmartAttachmentControl" version="1.0.4" display-name-key="Smart Attachment Control" description-key="Customizable file attachment control with drag-and-drop support" control-type="standard" >
+  <control namespace="PA911CustomControls" constructor="SmartAttachmentControl" version="1.0.7" display-name-key="Smart Attachment Control" description-key="Customizable file attachment control with drag-and-drop support" control-type="standard" >
     <external-service-usage enabled="false">
     </external-service-usage>
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
     <property name="Files" display-name-key="Files" description-key="JSON string containing uploaded file data" of-type="SingleLine.Text" usage="bound" required="false" />
+    <property name="FileMetadata" display-name-key="File Metadata" description-key="JSON string containing file metadata including EXIF data for images" of-type="SingleLine.Text" usage="output" required="false" />
     <property name="ClearFiles" display-name-key="Clear Files Counter" description-key="Increment this number to clear all files (e.g., use a context variable and increment it)" of-type="Whole.None" usage="input" required="false" default-value="0" />
     <property name="ShowDocumentation" display-name-key="Show Documentation" description-key="Set to true to display developer documentation overlay" of-type="TwoOptions" usage="input" required="false" default-value="false" />
     

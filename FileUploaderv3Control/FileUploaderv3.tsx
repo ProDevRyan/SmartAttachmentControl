@@ -1,4 +1,27 @@
 import * as React from 'react';
+import * as EXIF from 'exif-js';
+
+export interface FileMetadata {
+    name: string;
+    size: number;
+    type: string;
+    lastModified: string;
+    exif?: {
+        dateTaken?: string | null;
+        camera?: string | null;
+        gps?: {
+            latitude: any;
+            longitude: any;
+        } | null;
+        width?: number;
+        height?: number;
+        orientation?: number;
+        iso?: number;
+        focalLength?: any;
+        exposureTime?: any;
+        fNumber?: any;
+    };
+}
 
 export interface FileData {
     name: string;
@@ -25,12 +48,42 @@ const DocumentationOverlay: React.FC<{ onClose?: () => void }> = () => {
                         <li>Add the control to your screen</li>
                         <li>Add this code to the control's <strong>OnChange</strong> event (replace <code>SmartAttachmentControl</code> with your control's name):</li>
                     </ol>
-                    <pre><code>ClearCollect(colAttachments, ForAll(ParseJSON(SmartAttachmentControl.Files), {'{'}
-    name: Text(ThisRecord.name),
-    size: Value(ThisRecord.size),
-    type: Text(ThisRecord.type),
-    base64: Text(ThisRecord.base64)
-{'}'}))</code></pre>
+                    <p><strong>Note:</strong> The metadata example includes commonly-used EXIF fields. Customize the collection schema based on your needs.</p>
+                    <pre><code>{'// Convert files to collection\n'}
+{'ClearCollect(\n'}
+{'    colAttachments,\n'}
+{'    ForAll(\n'}
+{'        ParseJSON(SmartAttachmentControl.Files),\n'}
+{'        {\n'}
+{'            name: Text(ThisRecord.name),\n'}
+{'            size: Value(ThisRecord.size),\n'}
+{'            type: Text(ThisRecord.type),\n'}
+{'            base64: Text(ThisRecord.base64)\n'}
+{'        }\n'}
+{'    )\n'}
+{');\n\n'}
+{'// Convert metadata to collection (includes EXIF data for images)\n'}
+{'ClearCollect(\n'}
+{'    colFileMetadata,\n'}
+{'    ForAll(\n'}
+{'        ParseJSON(SmartAttachmentControl.FileMetadata),\n'}
+{'        {\n'}
+{'            name: Text(ThisRecord.name),\n'}
+{'            size: Value(ThisRecord.size),\n'}
+{'            type: Text(ThisRecord.type),\n'}
+{'            lastModified: DateTimeValue(ThisRecord.lastModified),\n'}
+{'            dateTaken: If(\n'}
+{'                !IsBlank(ThisRecord.exif.dateTaken),\n'}
+{'                DateTimeValue(ThisRecord.exif.dateTaken),\n'}
+{'                Blank()\n'}
+{'            ),\n'}
+{'            camera: Text(ThisRecord.exif.camera),\n'}
+{'            width: Value(ThisRecord.exif.width),\n'}
+{'            height: Value(ThisRecord.exif.height),\n'}
+{'            iso: Value(ThisRecord.exif.iso)\n'}
+{'        }\n'}
+{'    )\n'}
+{')'}</code></pre>
                 </div>
 
                 <div className="doc-section">
@@ -39,8 +92,16 @@ const DocumentationOverlay: React.FC<{ onClose?: () => void }> = () => {
                     <div className="property-item">
                         <h3>Files (Output)</h3>
                         <p><strong>Type:</strong> Single Line Text</p>
-                        <p><strong>Description:</strong> JSON string containing all uploaded files</p>
+                        <p><strong>Description:</strong> JSON string containing all uploaded files with base64 data</p>
                         <p><strong>Note:</strong> Use the OnChange event to convert this to a Power Apps collection</p>
+                    </div>
+
+                    <div className="property-item">
+                        <h3>FileMetadata (Output)</h3>
+                        <p><strong>Type:</strong> Single Line Text</p>
+                        <p><strong>Description:</strong> JSON string containing file metadata including EXIF data for images</p>
+                        <p><strong>Includes:</strong> Name, size, type, lastModified, and for images: dateTaken, camera, GPS, dimensions, ISO, focal length, exposure time, f-number</p>
+                        <p><strong>Note:</strong> Use ParseJSON to convert this to a Power Apps collection. Review the JSON output to see which fields are populated for your specific files, then customize your collection schema accordingly.</p>
                     </div>
 
                     <div className="property-item">
@@ -178,14 +239,49 @@ const DocumentationOverlay: React.FC<{ onClose?: () => void }> = () => {
 
                 <div className="doc-section">
                     <h2>Working with File Data</h2>
-                    <h3>Converting JSON to Collection</h3>
+                    <h3>Converting JSON to Collections</h3>
                     <p>Place this code in the control's <strong>OnChange</strong> event:</p>
-                    <pre><code>ClearCollect(colAttachments, ForAll(ParseJSON(SmartAttachmentControl.Files), {'{'}
-    name: Text(ThisRecord.name),
-    size: Value(ThisRecord.size),
-    type: Text(ThisRecord.type),
-    base64: Text(ThisRecord.base64)
-{'}'}))</code></pre>
+                    <p><strong>Important:</strong> The metadata collection example below shows a <em>sample</em> of commonly-used EXIF fields. Review the JSON output in <code>FileMetadata</code> to see all available fields for your files, then adjust the collection schema to include only the fields you need.</p>
+                    <pre><code>{'// Convert files to collection\n'}
+{'ClearCollect(\n'}
+{'    colAttachments,\n'}
+{'    ForAll(\n'}
+{'        ParseJSON(SmartAttachmentControl.Files),\n'}
+{'        {\n'}
+{'            name: Text(ThisRecord.name),\n'}
+{'            size: Value(ThisRecord.size),\n'}
+{'            type: Text(ThisRecord.type),\n'}
+{'            base64: Text(ThisRecord.base64)\n'}
+{'        }\n'}
+{'    )\n'}
+{');\n\n'}
+{'// Convert metadata to collection (SAMPLE - customize for your needs)\n'}
+{'// For images: includes EXIF data like dateTaken, camera, dimensions, etc.\n'}
+{'// For non-images: only basic metadata (name, size, type, lastModified)\n'}
+{'ClearCollect(\n'}
+{'    colFileMetadata,\n'}
+{'    ForAll(\n'}
+{'        ParseJSON(SmartAttachmentControl.FileMetadata),\n'}
+{'        {\n'}
+{'            name: Text(ThisRecord.name),\n'}
+{'            size: Value(ThisRecord.size),\n'}
+{'            type: Text(ThisRecord.type),\n'}
+{'            lastModified: DateTimeValue(ThisRecord.lastModified),\n'}
+{'            // EXIF fields (images only) - customize based on your needs:\n'}
+{'            dateTaken: If(\n'}
+{'                !IsBlank(ThisRecord.exif.dateTaken),\n'}
+{'                DateTimeValue(ThisRecord.exif.dateTaken),\n'}
+{'                Blank()\n'}
+{'            ),\n'}
+{'            camera: Text(ThisRecord.exif.camera),\n'}
+{'            width: Value(ThisRecord.exif.width),\n'}
+{'            height: Value(ThisRecord.exif.height),\n'}
+{'            iso: Value(ThisRecord.exif.iso)\n'}
+{'            // Additional available EXIF fields: orientation, focalLength,\n'}
+{'            // exposureTime, fNumber, gps.latitude, gps.longitude\n'}
+{'        }\n'}
+{'    )\n'}
+{')'}</code></pre>
                     
                     <h3>Collection Schema</h3>
                     <p>After conversion, <code>colAttachments</code> contains:</p>
@@ -195,13 +291,47 @@ const DocumentationOverlay: React.FC<{ onClose?: () => void }> = () => {
                         <li><strong>type</strong> (Text): MIME type (e.g., "application/pdf")</li>
                         <li><strong>base64</strong> (Text): Base64-encoded file data with data URI prefix</li>
                     </ul>
+                    
+                    <p>And <code>colFileMetadata</code> contains (based on the sample schema above - customize as needed):</p>
+                    <ul>
+                        <li><strong>name</strong> (Text): Original filename</li>
+                        <li><strong>size</strong> (Number): File size in bytes</li>
+                        <li><strong>type</strong> (Text): MIME type</li>
+                        <li><strong>lastModified</strong> (DateTime): File last modified date</li>
+                        <li><strong>dateTaken</strong> (DateTime): Date photo was taken (images only, if available in EXIF)</li>
+                        <li><strong>camera</strong> (Text): Camera make and model (images only, if available in EXIF)</li>
+                        <li><strong>width</strong> (Number): Image width in pixels (images only)</li>
+                        <li><strong>height</strong> (Number): Image height in pixels (images only)</li>
+                        <li><strong>iso</strong> (Number): ISO speed rating (images only, if available in EXIF)</li>
+                    </ul>
+                    <p><strong>Note:</strong> The example above shows commonly-used fields. Additional EXIF data available includes: <code>orientation</code>, <code>focalLength</code>, <code>exposureTime</code>, <code>fNumber</code>, and GPS coordinates (<code>gps.latitude</code>, <code>gps.longitude</code>). Inspect the JSON in <code>FileMetadata</code> to see what's available for your specific files.</p>
+
+                    <h3>Using Metadata in Your App</h3>
+                    <pre><code>{'// Get date a photo was taken\n'}
+{'LookUp(\n'}
+{'    colFileMetadata,\n'}
+{'    name = "vacation.jpg"\n'}
+{').dateTaken\n\n'}
+{'// Filter photos by date taken\n'}
+{'Filter(\n'}
+{'    colFileMetadata,\n'}
+{'    DateValue(dateTaken) = DateValue("2024-07-04")\n'}
+{')\n\n'}
+{'// Display camera info\n'}
+{'LookUp(\n'}
+{'    colFileMetadata,\n'}
+{'    name = "photo.jpg"\n'}
+{').camera'}</code></pre>
 
                     <h3>Clearing Files Programmatically</h3>
-                    <pre><code>// Initialize counter variable (in App.OnStart or Screen.OnVisible)
-UpdateContext({'{'}varClearCounter: 0{'}'});
-
-// When you want to clear files, increment the counter
-UpdateContext({'{'}varClearCounter: varClearCounter + 1{'}'});</code></pre>
+                    <pre><code>{'// Initialize counter variable (in App.OnStart or Screen.OnVisible)\n'}
+{'UpdateContext({\n'}
+{'    varClearCounter: 0\n'}
+{'});\n\n'}
+{'// When you want to clear files, increment the counter\n'}
+{'UpdateContext({\n'}
+{'    varClearCounter: varClearCounter + 1\n'}
+{'});'}</code></pre>
                     <p><strong>Note:</strong> Each time the counter changes, files are cleared. This avoids timing issues with boolean toggles.</p>
                 </div>
 
@@ -247,8 +377,9 @@ settingMaxNumberOfFiles: 10</code></pre>
                 </div>
 
                 <div className="doc-footer">
-                    <p><strong>Control Version:</strong> 1.0.3</p>
+                    <p><strong>Control Version:</strong> 1.0.7</p>
                     <p><strong>Namespace:</strong> PA911CustomControls.SmartAttachmentControl</p>
+                    <p><strong>New in v1.0.7:</strong> FileMetadata output with EXIF data extraction for images</p>
                 </div>
             </div>
         </div>
@@ -258,6 +389,8 @@ settingMaxNumberOfFiles: 10</code></pre>
 export interface FileUploaderProps {
     files: FileData[];
     onFilesChange: (files: FileData[]) => void;
+    onMetadataChange?: (metadata: FileMetadata[]) => void;
+    clearFilesTriggered?: boolean;
     showDocumentation?: boolean;
     stylePrimaryColorHex?: string;
     styleMainTextColor?: string;
@@ -290,17 +423,18 @@ interface FileItemProps {
     mainTextColor: string;
     errorColor: string;
     deleteIcon: string;
+    backgroundColor: string;
     getFileIcon: (fileName: string) => string;
     formatFileSize: (bytes: number) => string;
 }
 
-const FileItem = React.memo<FileItemProps>(({ file, index, onRemove, borderRadius, mainTextColor, errorColor, deleteIcon, getFileIcon, formatFileSize }) => {
+const FileItem = React.memo<FileItemProps>(({ file, index, onRemove, borderRadius, mainTextColor, errorColor, deleteIcon, getFileIcon, formatFileSize, backgroundColor }) => {
     const handleRemove = React.useCallback(() => {
         onRemove(index);
     }, [index, onRemove]);
 
     return (
-        <div className="file-item" style={{ borderRadius: `${borderRadius}px` }}>
+        <div className="file-item" style={{ borderRadius: `${borderRadius}px`, backgroundColor: backgroundColor }}>
             <div className="file-icon" dangerouslySetInnerHTML={{ __html: getFileIcon(file.name) }} style={{ width: '24px', height: '24px' }} />
             <div className="file-info">
                 <div className="file-name" style={{ color: mainTextColor }}>{file.name}</div>
@@ -323,7 +457,8 @@ const FileItem = React.memo<FileItemProps>(({ file, index, onRemove, borderRadiu
            prevProps.borderRadius === nextProps.borderRadius &&
            prevProps.mainTextColor === nextProps.mainTextColor &&
            prevProps.errorColor === nextProps.errorColor &&
-           prevProps.deleteIcon === nextProps.deleteIcon;
+           prevProps.deleteIcon === nextProps.deleteIcon &&
+           prevProps.backgroundColor === nextProps.backgroundColor;
 });
 
 export class FileUploader extends React.PureComponent<FileUploaderProps, { errorMessage: string }> {
@@ -350,6 +485,13 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
         this.handleRemoveFile = this.handleRemoveFile.bind(this);
         this.getFileIcon = this.getFileIcon.bind(this);
         this.formatFileSize = this.formatFileSize.bind(this);
+    }
+
+    componentDidUpdate(prevProps: FileUploaderProps) {
+        // Clear error message when ClearFiles is triggered
+        if (this.props.clearFilesTriggered && !prevProps.clearFilesTriggered && this.state.errorMessage) {
+            this.setState({ errorMessage: '' });
+        }
     }
 
     private handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -437,6 +579,50 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
         dropZone.classList.remove('drag-over');
     };
 
+    private extractMetadata = async (file: File): Promise<FileMetadata> => {
+        return new Promise((resolve) => {
+            const metadata: FileMetadata = {
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                lastModified: new Date(file.lastModified).toISOString()
+            };
+
+            // Extract EXIF data for images
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        EXIF.getData(img as any, function(this: any) {
+                            const exifData = EXIF.getAllTags(this);
+                            metadata.exif = {
+                                dateTaken: exifData.DateTime || exifData.DateTimeOriginal || null,
+                                camera: exifData.Make && exifData.Model ? `${exifData.Make} ${exifData.Model}` : null,
+                                gps: exifData.GPSLatitude && exifData.GPSLongitude ? {
+                                    latitude: exifData.GPSLatitude,
+                                    longitude: exifData.GPSLongitude
+                                } : null,
+                                width: exifData.PixelXDimension || img.width,
+                                height: exifData.PixelYDimension || img.height,
+                                orientation: exifData.Orientation,
+                                iso: exifData.ISOSpeedRatings,
+                                focalLength: exifData.FocalLength,
+                                exposureTime: exifData.ExposureTime,
+                                fNumber: exifData.FNumber
+                            };
+                            resolve(metadata);
+                        });
+                    };
+                    img.src = e.target?.result as string;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                resolve(metadata);
+            }
+        });
+    };
+
     private processFiles = (files: File[]) => {
         // Clear any existing error when user attempts to add files
         this.setState({ errorMessage: '' });
@@ -462,9 +648,27 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
                 });
             });
 
-            Promise.all(filePromises).then(newFiles => {
+            // Extract metadata for all files
+            const metadataPromises = valid.map(file => this.extractMetadata(file));
+
+            Promise.all([Promise.all(filePromises), Promise.all(metadataPromises)]).then(([newFiles, newMetadata]) => {
                 const updatedFiles = [...this.props.files, ...newFiles];
                 this.props.onFilesChange(updatedFiles);
+                
+                // Notify about metadata if callback is provided
+                if (this.props.onMetadataChange) {
+                    // Combine existing metadata with new metadata
+                    // Since we can't retrieve old metadata, we'll create placeholder entries for existing files
+                    const existingMetadata: FileMetadata[] = this.props.files.map(f => ({
+                        name: f.name,
+                        size: f.size,
+                        type: f.type,
+                        lastModified: new Date().toISOString()
+                    }));
+                    const allMetadata = [...existingMetadata, ...newMetadata];
+                    this.props.onMetadataChange(allMetadata);
+                }
+                
                 // Show error after adding valid files
                 if (error) {
                     this.setState({ errorMessage: error });
@@ -483,6 +687,12 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
     private handleRemoveFile = (index: number) => {
         const updatedFiles = this.props.files.filter((_, i) => i !== index);
         this.props.onFilesChange(updatedFiles);
+        
+        // Notify about metadata change if callback is provided
+        if (this.props.onMetadataChange && updatedFiles.length === 0) {
+            this.props.onMetadataChange([]);
+        }
+        
         // Clear error when file is removed (might resolve the issue)
         if (this.state.errorMessage) {
             this.setState({ errorMessage: '' });
@@ -673,6 +883,7 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
                                     mainTextColor={mainTextColor}
                                     errorColor={errorColor}
                                     deleteIcon={deleteIconSvg}
+                                    backgroundColor={backgroundColor}
                                     getFileIcon={this.getFileIcon}
                                     formatFileSize={this.formatFileSize}
                                 />
