@@ -115,6 +115,7 @@ ClearCollect(colAttachments, ForAll(ParseJSON(SmartAttachmentControl.Files), {
 #### Layout
 - **styleBorderRadius**: Border radius in pixels (default: 5)
 - **styleBoxShadowSize**: Shadow offset in pixels (default: 3)
+- **styleShowFileList**: Show or hide the Selected Files list; drop zone fills the space when hidden (default: true)
 - **styleGap**: Gap between drop zone and file list (default: 20)
 - **styleLayoutHorizontal**: True for side-by-side, false for stacked (default: true)
 - **styleFont**: Font family name (default: Open Sans)
