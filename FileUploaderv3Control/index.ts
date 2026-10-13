@@ -74,6 +74,7 @@ export class SmartAttachmentControl implements ComponentFramework.StandardContro
                 styleErrorColorHex: getStringValue(context.parameters.styleErrorColorHex?.raw),
                 styleBorderRadius: context.parameters.styleBorderRadius?.raw !== undefined && context.parameters.styleBorderRadius?.raw !== null ? context.parameters.styleBorderRadius.raw : undefined,
                 styleBoxShadowSize: context.parameters.styleBoxShadowSize?.raw !== undefined && context.parameters.styleBoxShadowSize?.raw !== null ? context.parameters.styleBoxShadowSize.raw : undefined,
+                styleShowFileList: context.parameters.styleShowFileList?.raw !== false,
                 styleGap: context.parameters.styleGap?.raw !== undefined && context.parameters.styleGap?.raw !== null ? context.parameters.styleGap.raw : undefined,
                 styleLayoutHorizontal: context.parameters.styleLayoutHorizontal?.raw !== false,
                 styleFont: getStringValue(context.parameters.styleFont?.raw),

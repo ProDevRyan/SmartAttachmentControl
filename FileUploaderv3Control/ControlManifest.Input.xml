@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="PA911CustomControls" constructor="SmartAttachmentControl" version="1.0.7" display-name-key="Smart Attachment Control" description-key="Customizable file attachment control with drag-and-drop support" control-type="standard" >
+  <control namespace="PA911CustomControls" constructor="SmartAttachmentControl" version="1.0.8" display-name-key="Smart Attachment Control" description-key="Customizable file attachment control with drag-and-drop support" control-type="standard" >
     <external-service-usage enabled="false">
     </external-service-usage>
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
@@ -17,6 +17,7 @@
     <property name="styleErrorColorHex" display-name-key="Error Color (Hex)" description-key="Hex color for error messages" of-type="SingleLine.Text" usage="input" required="false" default-value="#d13438" />
     <property name="styleBorderRadius" display-name-key="Border Radius" description-key="Border radius in pixels" of-type="Whole.None" usage="input" required="false" default-value="5" />
     <property name="styleBoxShadowSize" display-name-key="Box Shadow Size" description-key="Box shadow offset in pixels (0 for no shadow)" of-type="Whole.None" usage="input" required="false" default-value="3" />
+    <property name="styleShowFileList" display-name-key="Show File List" description-key="Show or hide the Selected Files list. When hidden, the drop zone fills the full control" of-type="TwoOptions" usage="input" required="false" default-value="true" />
     <property name="styleGap" display-name-key="Gap Size" description-key="Gap between drop zone and file list in pixels" of-type="Whole.None" usage="input" required="false" default-value="20" />
     <property name="styleLayoutHorizontal" display-name-key="Horizontal Layout" description-key="True for side-by-side layout, false for vertical stacked layout" of-type="TwoOptions" usage="input" required="false" default-value="true" />
     <property name="styleFont" display-name-key="Font Family" description-key="Font family name (e.g., Open Sans, Arial, Lato)" of-type="SingleLine.Text" usage="input" required="false" default-value="Open Sans" />

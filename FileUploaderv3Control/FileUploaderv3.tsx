@@ -164,6 +164,11 @@ const DocumentationOverlay: React.FC<{ onClose?: () => void }> = () => {
                             <p>Box shadow offset (0 = no shadow)</p>
                         </div>
                         <div className="property-item">
+                            <h4>styleShowFileList</h4>
+                            <p>Default: true</p>
+                            <p>Show or hide the Selected Files list (drop zone fills the space when hidden)</p>
+                        </div>
+                        <div className="property-item">
                             <h4>styleGap</h4>
                             <p>Default: 20 | Range: 0-100</p>
                             <p>Space between drop zone and file list</p>
@@ -399,6 +404,7 @@ export interface FileUploaderProps {
     styleErrorColorHex?: string;
     styleBorderRadius?: number;
     styleBoxShadowSize?: number;
+    styleShowFileList?: boolean;
     styleGap?: number;
     styleLayoutHorizontal?: boolean;
     styleFont?: string;
@@ -776,6 +782,7 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
         const boxShadowSize = (this.props.styleBoxShadowSize !== undefined && this.props.styleBoxShadowSize !== null) ? this.props.styleBoxShadowSize : 5;
         const gap = (this.props.styleGap !== undefined && this.props.styleGap !== null) ? this.props.styleGap : 20;
         const isHorizontal = this.props.styleLayoutHorizontal !== false;
+        const showFileList = this.props.styleShowFileList !== false;
         const buttonText = this.props.textBrowseButtonText || 'Select files';
         const fontFamily = this.props.styleFont || 'Open Sans';
         
@@ -862,6 +869,7 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
                     />
                 </div>
 
+                {showFileList && (
                 <div className="file-list" style={{ borderRadius: `${borderRadius}px`, boxShadow: boxShadow }}>
                     <div className="file-list-header" style={{ backgroundColor: backgroundColor, color: mainTextColor }}>
                         Selected Files ({this.props.files.length})
@@ -891,6 +899,7 @@ export class FileUploader extends React.PureComponent<FileUploaderProps, { error
                         )}
                     </div>
                 </div>
+                )}
             </div>
         );
     }
