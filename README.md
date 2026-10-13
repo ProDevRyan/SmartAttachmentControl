@@ -49,7 +49,16 @@ Created by **PowerPlatformRyan**
 
 | Version | Date             | Comments                                                                 |
 | ------- | ---------------- | ------------------------------------------------------------------------ |
+| 1.0.0.8 | October 2026     | Show File List toggle (`styleShowFileList`) to hide the Selected Files pane |
+| 1.0.7   | November 2025    | FileMetadata output with EXIF data extraction for images                 |
 | 1.0.0   | November 2025    | Initial release with drag-and-drop, validation, and styling options     |
+
+## Download
+
+Get the latest solution packages from **[Releases](https://github.com/ProDevRyan/SmartAttachmentControl/releases/latest)**. Each release includes:
+
+- `SmartAttachmentControl_<version>_managed.zip` — import into test/production environments
+- `SmartAttachmentControl_<version>_unmanaged.zip` — import into a development environment if you want to customize the solution
 
 ## Prerequisites
 
@@ -69,15 +78,23 @@ Created by **PowerPlatformRyan**
 ### Creating a Solution Package
 
 1. Navigate to the `Solution` folder
-2. Run `msbuild /t:restore`
-3. Run `msbuild /t:build`
-4. Find the generated solution zip in `Solution/bin/Debug/`
+2. Run `dotnet build -c Release /p:PcfBuildMode=production /p:SolutionPackageType=Both`
+3. Find the generated packages in `Solution/bin/Release/`: `Solution.zip` (unmanaged) and `Solution_managed.zip` (managed)
+
+> `/p:PcfBuildMode=production` is required for release builds — the project defaults to a development (unminified) bundle.
+
+### Releasing a New Version
+
+1. Bump the control version in `FileUploaderv3Control/ControlManifest.Input.xml` (three-part, e.g. `1.0.9`)
+2. Bump the solution version in `Solution/src/Other/Solution.xml` (four-part, e.g. `1.0.0.9`)
+3. Build both packages (above) and rename them to `SmartAttachmentControl_<version>_managed.zip` / `_unmanaged.zip`
+4. Create a GitHub release tagged `v<solution version>` and attach both zips. Solution zips are not committed to the repo.
 
 ### Importing to Power Apps
 
 Import the solution zip file using:
 - **Manual**: [Import via make.powerapps.com](https://learn.microsoft.com/powerapps/maker/data-platform/import-update-export-solutions)
-- **CLI**: `pac solution import --path SmartAttachmentControl_1_0_5_unmanaged.zip --activate-plugins`
+- **CLI**: `pac solution import --path SmartAttachmentControl_1_0_0_8_managed.zip`
 
 ### Using the Control
 
