@@ -13,3 +13,6 @@ Solution/obj/
 *.mp4
 *.mov
 *.avi
+
+# Solution packages are published as GitHub release assets, not committed
+*.zip
